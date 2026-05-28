@@ -6,6 +6,8 @@ services:
     volumes:
       - ./:/var/www/
       - ./_docker/nginx/conf.d/:/etc/nginx/conf.d/
+    depends_on:
+      - app
     container_name: olx_nginx
 
   app:
