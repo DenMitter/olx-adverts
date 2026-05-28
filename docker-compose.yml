@@ -1,0 +1,46 @@
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/
+      - ./_docker/nginx/conf.d/:/etc/nginx/conf.d/
+    container_name: olx_nginx
+
+  app:
+    build:
+      context: .
+      dockerfile: _docker/app/Dockerfile
+    volumes:
+      - ./:/var/www/
+    depends_on:
+      - db
+    container_name: olx_app
+
+  db:
+    image: mariadb:11
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MARIADB_DATABASE: ${DB_DATABASE:-olx-adverts}
+      MARIADB_CHARACHER_SET_SERVER: utf8mb4
+      MARIADB_COLLATION_SERVER: utf8mb4_general_ci
+    volumes:
+      - ./db-data:/var/lib/db
+    container_name: olx_db
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      MARIADB_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+    depends_on:
+      - db
+    container_name: olx_phpmyadmin
+
+volumes:
+  db-data:
