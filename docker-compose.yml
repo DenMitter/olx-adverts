@@ -27,7 +27,7 @@ services:
     environment:
       MARIADB_ROOT_PASSWORD: ${DB_PASSWORD:-root}
       MARIADB_DATABASE: ${DB_DATABASE:-olx-adverts}
-      MARIADB_CHARACHER_SET_SERVER: utf8mb4
+      MARIADB_CHARACTER_SET_SERVER: utf8mb4
       MARIADB_COLLATION_SERVER: utf8mb4_general_ci
     volumes:
       - ./db-data:/var/lib/db
