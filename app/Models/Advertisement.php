@@ -20,7 +20,7 @@ class Advertisement extends Model
     {
         return [
             'last_checked_at' => 'datetime',
-            'last_price' => 'float'
+            'last_price' => 'decimal:2'
         ];
     }
 

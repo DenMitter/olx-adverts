@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('olx_id', 62)->unique();
             $table->string('url');
-            $table->integer('last_price')->nullable();
+            $table->decimal('last_price', 10, 2)->nullable();
             $table->dateTime('last_checked_at')->nullable();
             $table->timestamps();
         });
