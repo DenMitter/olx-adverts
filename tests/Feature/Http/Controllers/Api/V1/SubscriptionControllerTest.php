@@ -1,12 +1,11 @@
 <?php
 
-use App\Models\Subscription;
+test('check subscriptions store & deduplication', function () {
+    $link = 'https://www.olx.ua/d/uk/obyavlenie/prodam-termnovo-parketnik-dzhip-4h4-ID10A6Bc.html?search_reason=search%7Corganic';
+    
+    $this->postJson('/api/v1/subscriptions', ['email' => 'test1@olx.com', 'url' => $link]);
+    $this->postJson('/api/v1/subscriptions', ['email' => 'test2@olx.com', 'url' => $link]);
 
-test('subscriptions list', function () {
-    $subscription = Subscription::factory()->create();
-
-    $this->getJson('/api/v1/subscriptions')
-        ->assertOk()
-        ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.olx_id', $subscription->advertisement->olx_id);
+    $this->assertDatabaseCount('subscriptions', 2);
+    $this->assertDatabaseCount('advertisements', 1);
 });
