@@ -20,6 +20,19 @@ services:
       - db
     container_name: olx_app
 
+  queue_worker:
+    build:
+      context: .
+      dockerfile: _docker/app/Dockerfile
+    volumes:
+      - ./:/var/www/
+    command: php artisan queue:work
+    depends_on:
+      - app
+      - db
+    restart: unless-stopped
+    container_name: olx_queue_worker
+
   db:
     image: mariadb:11
     ports:

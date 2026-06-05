@@ -4,6 +4,7 @@ namespace App\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use App\Models\Advertisement;
 
 class ValidOlxUrl implements ValidationRule
 {
@@ -13,7 +14,7 @@ class ValidOlxUrl implements ValidationRule
         $path = parse_url($value, PHP_URL_PATH);
 
         $hostOk = $host === 'olx.ua' || str_ends_with($host ?? '', '.olx.ua');
-        $hasId = preg_match('#-ID([A-Za-z0-9]+)\.html#', $path ?? '');
+        $hasId = Advertisement::extractOlxId($value);
         
         if(!$hostOk || !$hasId) {
             $fail('Invalid URL. Should be from olx.ua');
