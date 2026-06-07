@@ -11,12 +11,12 @@ class ValidOlxUrl implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $host = parse_url($value, PHP_URL_HOST);
-        $path = parse_url($value, PHP_URL_PATH);
+        $path = parse_url($value, PHP_URL_PATH) ?? '';
 
         $hostOk = $host === 'olx.ua' || str_ends_with($host ?? '', '.olx.ua');
-        $hasId = Advertisement::extractOlxId($value);
+        $isAdPath = str_contains($path, '/d/') || str_ends_with($path, '.html');
         
-        if(!$hostOk || !$hasId) {
+        if(!$hostOk || !$isAdPath) {
             $fail('Invalid URL. Should be from olx.ua');
         }
     }
