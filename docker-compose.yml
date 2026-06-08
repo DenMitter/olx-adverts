@@ -35,6 +35,20 @@ services:
     restart: unless-stopped
     container_name: olx_queue_worker
 
+  scheduler:
+    build:
+      context: .
+      dockerfile: _docker/app/Dockerfile
+    image: olx_app_scheduler:latest
+    volumes:
+      - ./:/var/www/
+    command: php artisan schedule:work
+    depends_on:
+      - app
+      - db
+    restart: unless-stopped
+    container_name: olx_scheduler
+
   db:
     image: mariadb:11
     ports:
