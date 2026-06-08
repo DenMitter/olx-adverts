@@ -48,4 +48,8 @@ echo "DB is ready"
 
 php artisan migrate --force || true
 
-exec php-fpm -F
+if [ $# -gt 0 ]; then
+    exec "$@"
+else
+    exec php-fpm -F
+fi

@@ -41,13 +41,9 @@ class SubscriptionController extends Controller
         }
     }
 
-    public function confirm($subscription)
+    public function confirm(Subscription $subscription)
     {
-        $subscription = Subscription::findOrFail($subscription);
-        $subscription = tap($subscription)->update(['status' => 'active']);
-
-        return (new SubscriptionResource($subscription))
-            ->response()
-            ->setStatusCode(200);
+        $subscription->update(['status' => 'active']);
+        return new SubscriptionResource($subscription);
     }
 }

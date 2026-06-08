@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class OlxService
 {
@@ -23,7 +25,7 @@ class OlxService
 
             $endPos = strpos($htmlFromJson, '";');
 
-            $rawJson = substr($htmlFromJson, 0, $endPos); // отримуємо сирий json
+            $rawJson = substr($htmlFromJson, 0, $endPos);
 
             $cleanJsonString = json_decode('"' . $rawJson . '"');
             $data = json_decode($cleanJsonString, true);
@@ -42,5 +44,22 @@ class OlxService
             activity('parser')->error($e->getMessage());
             return null;
         }
+    }
+
+    public function getPrice(int $olxId): ?float
+    {
+        $response = Http::withUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36')
+            ->get('https://m.olx.ua/api/v1/offers/' . $olxId);
+
+        if ($response->failed()) {
+            return null;
+        }
+
+        $params = $response->json('data.params') ?? [];
+        $priceParam = collect($params)->firstWhere('key', 'price');
+
+        $price = $priceParam['value']['value'] ?? null;
+
+        return $price ? (float)$price : null;
     }
 }
