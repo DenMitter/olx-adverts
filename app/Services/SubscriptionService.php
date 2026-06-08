@@ -34,6 +34,7 @@ class SubscriptionService
             $advertisement = Advertisement::create([
                 'olx_id'     => $olxData['olx_id'],
                 'url'        => $url,
+                'title'      => $olxData['title'],
                 'last_price' => $olxData['price'],
                 'currency'   => $olxData['currency'],
             ]);

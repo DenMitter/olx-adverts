@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Subscription extends Model
 {
@@ -12,10 +13,9 @@ class Subscription extends Model
     protected $fillable = [
         'email',
         'status',
-        'confirm_token',
     ];
 
-    public function advertisement()
+    public function advertisement(): BelongsTo
     {
         return $this->belongsTo(Advertisement::class);
     }

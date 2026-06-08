@@ -18,7 +18,6 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->string('email');
             $table->string('status')->default('pending');
-            $table->string('confirm_token')->unique()->nullable();
             $table->unique(['advertisement_id', 'email']);
             $table->timestamps();
         });

@@ -36,6 +36,7 @@ class OlxService
                 'olx_id'   => (int) ($ad['id'] ?? 0),
                 'price'    => (float) ($ad['price']['regularPrice']['value'] ?? 0),
                 'currency' => (string) ($ad['price']['regularPrice']['currencyCode'] ?? 'UAH'),
+                'title'    => (string) ($ad['title'] ?? ''),
             ];
         } catch (Exception $e) {
             activity('parser')->error($e->getMessage());
