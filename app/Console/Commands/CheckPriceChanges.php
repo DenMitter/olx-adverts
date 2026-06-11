@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 use App\Models\Advertisement;
 use Illuminate\Support\Facades\Http;
 use App\Jobs\SendPriceChangedNotification;
+use App\Services\OlxService;
 
 #[Signature('app:check-price-changes')]
 #[Description('Check for price changes in advertisements and notify subscribers')]
