@@ -31,13 +31,15 @@ class SubscriptionService
                 throw new Exception('Unable to fetch advertisement data from OLX.');
             }
 
-            $advertisement = Advertisement::create([
-                'olx_id'     => $olxData['olx_id'],
-                'url'        => $url,
-                'title'      => $olxData['title'],
-                'last_price' => $olxData['price'],
-                'currency'   => $olxData['currency'],
-            ]);
+            $advertisement = Advertisement::firstOrCreate(
+                ['olx_id' => $olxData['olx_id']],
+                [
+                    'url'        => $url,
+                    'title'      => $olxData['title'],
+                    'last_price' => $olxData['price'],
+                    'currency'   => $olxData['currency'],
+                ]
+            );
         }
 
         // create subscription
