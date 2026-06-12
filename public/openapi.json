@@ -1,0 +1,90 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OLX Adverts API",
+    "description": "API for monitoring OLX advertisements.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/subscriptions": {
+      "post": {
+        "summary": "Create a new subscription",
+        "description": "Accepts user email and OLX link. If the advertisement is new — parses it synchronously.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "url"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "test@olx.com"
+                  },
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://www.olx.ua/d/uk/obyavlenie/bmw-523i-e60-2005-r-v-IDYYaWR.html"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Subscription created successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "id": 1,
+                    "email": "test@olx.com",
+                    "status": null,
+                    "advertisement": {
+                      "olx_id": 900921867,
+                      "title": "BMW, 523i E60 2005 р.в.",
+                      "url": "https://www.olx.ua/d/uk/obyavlenie/bmw-523i-e60-2005-r-v-IDYYaWR.html?search_reason=search%7Cpromoted",
+                      "last_price": "6600.00",
+                      "currency": "USD",
+                      "last_checked_at": null
+                    },
+                    "subscription_started_at": "08.06.2026 14:08"
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Subscription already exists",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "id": 1,
+                    "email": "test@olx.com",
+                    "status": "active",
+                    "advertisement": {
+                      "olx_id": 900921867,
+                      "title": "BMW, 523i E60 2005 р.в.",
+                      "url": "https://www.olx.ua/d/uk/obyavlenie/bmw-523i-e60-2005-r-v-IDYYaWR.html?search_reason=search%7Cpromoted",
+                      "last_price": "6600.00",
+                      "currency": "USD",
+                      "last_checked_at": null
+                    },
+                    "subscription_started_at": "08.06.2026 14:08"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error (invalid email or url)"
+          }
+        }
+      }
+    }
+  }
+}
