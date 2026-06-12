@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 use App\Models\Advertisement;
 use Illuminate\Support\Facades\Http;
 use App\Jobs\SendPriceChangedNotification;
+use Illuminate\Support\Facades\Log;
 use App\Services\OlxService;
 
 #[Signature('app:check-price-changes')]
@@ -18,31 +19,34 @@ class CheckPriceChanges extends Command
     
     public function handle(OlxService $olxService)
     {
-        $advertisements = Advertisement::whereHas('subscriptions', function ($query) {
+        $query = Advertisement::whereHas('subscriptions', function ($query) {
             $query->where('status', 'active');
-        })->get();
+        });
 
-        foreach ($advertisements as $advertisement) {
-            $currentPrice = $olxService->getPrice($advertisement->olx_id);
+        $query->chunk(100, function ($advertisements) use ($olxService) {
+            foreach ($advertisements as $advertisement) {
+                $currentPrice = $olxService->getPrice($advertisement->olx_id);
 
-            if (!$currentPrice) {
-                continue;
-            }
-
-            if ((float)$advertisement->last_price !== $currentPrice) {
-                $oldPrice = $advertisement->last_price;
-                $subscriptions = $advertisement->subscriptions()->where('status', 'active')->get();
-
-                foreach ($subscriptions as $subscription) {
-                    SendPriceChangedNotification::dispatch($subscription, $oldPrice, $currentPrice);
-                    $this->count++;
+                if (!$currentPrice) {
+                    Log::warning("Could not fetch price for Advertisement ID: {$advertisement->olx_id}");
+                    continue;
                 }
 
-                $advertisement->update([
-                    'last_price' => $currentPrice,
-                ]);
+                if ((float)$advertisement->last_price !== $currentPrice) {
+                    $oldPrice = $advertisement->last_price;
+                    $subscriptions = $advertisement->subscriptions()->where('status', 'active')->get();
+
+                    foreach ($subscriptions as $subscription) {
+                        SendPriceChangedNotification::dispatch($subscription, $oldPrice, $currentPrice);
+                        $this->count++;
+                    }
+
+                    $advertisement->update([
+                        'last_price' => $currentPrice,
+                    ]);
+                }
             }
-        }
+        });
 
         $this->info('Send ' . $this->count . ' mails');
     }
